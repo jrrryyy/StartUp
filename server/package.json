@@ -1,0 +1,40 @@
+{
+  "name": "startup-server",
+  "version": "1.0.0",
+  "description": "StartUp - Full-Stack MERN Business Management & POS System Backend API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "pos",
+    "business-management",
+    "mern",
+    "retail",
+    "coffee-shop"
+  ],
+  "author": "StartUp Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "google-auth-library": "^11.2.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0",
+    "nodemailer": "^10.1.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.3.0",
+    "nodemon": "^3.1.9"
+  }
+}

@@ -87,27 +87,36 @@ if (process.env.NODE_ENV === 'development') {
 // Global API rate limit
 app.use('/api', apiLimiter);
 
-// Health Check
-app.get('/api/health', (req, res) => {
+// Health Check (supports both /api/health and /health)
+const handleHealthCheck = (req, res) => {
   res.json({
     status: 'online',
     system: 'StartUp API Engine',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
   });
-});
+};
+app.get('/api/health', handleHealthCheck);
+app.get('/health', handleHealthCheck);
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/business', businessRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/expenses', expenseRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/employees', employeeRoutes);
-app.use('/api/demo', demoRoutes);
+// API Routes (mounted under both /api and root paths for maximum compatibility)
+const apiRoutes = [
+  ['/auth', authRoutes],
+  ['/business', businessRoutes],
+  ['/products', productRoutes],
+  ['/inventory', inventoryRoutes],
+  ['/orders', orderRoutes],
+  ['/expenses', expenseRoutes],
+  ['/analytics', analyticsRoutes],
+  ['/reports', reportRoutes],
+  ['/employees', employeeRoutes],
+  ['/demo', demoRoutes],
+];
+
+apiRoutes.forEach(([path, router]) => {
+  app.use(`/api${path}`, router);
+  app.use(path, router);
+});
 
 // 404 Route Handler
 app.use('*', (req, res) => {

@@ -85,7 +85,14 @@ const sendViaHttpApi = async ({ to, subject, html, text }) => {
   // Option 2: Brevo HTTP API (Port 443 HTTPS)
   if (process.env.BREVO_API_KEY) {
     try {
-      const senderEmail = process.env.SMTP_USER || process.env.BREVO_SENDER || 'roven.yulo@gmail.com';
+      let senderEmail = process.env.BREVO_SENDER;
+      if (!senderEmail && process.env.MAIL_FROM) {
+        const match = process.env.MAIL_FROM.match(/<([^>]+)>/);
+        senderEmail = match ? match[1] : process.env.MAIL_FROM;
+      }
+      if (!senderEmail) {
+        senderEmail = process.env.SMTP_USER || 'start.up122503@gmail.com';
+      }
       const senderName = 'StartUp';
       const res = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',

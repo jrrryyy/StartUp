@@ -1,6 +1,15 @@
 const nodemailer = require('nodemailer');
 
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const getClientOrigin = (customOrigin) => {
+  if (customOrigin) return customOrigin.trim().replace(/\/+$/, '');
+  const envOrigin = process.env.CLIENT_ORIGIN;
+  if (envOrigin) {
+    const firstOrigin = envOrigin.split(',')[0].trim().replace(/\/+$/, '');
+    if (firstOrigin) return firstOrigin;
+  }
+  return 'http://localhost:5173';
+};
+
 const EMAIL_FROM = process.env.MAIL_FROM || process.env.EMAIL_FROM || process.env.SMTP_USER || process.env.GMAIL_USER || 'no-reply@startup.ph';
 
 // Create Nodemailer Transporter
@@ -37,8 +46,9 @@ const createTransporter = () => {
 /**
  * Send Account Activation / Email Verification Link
  */
-const sendVerificationEmail = async ({ to, name, token }) => {
-  const verificationUrl = `${CLIENT_ORIGIN}/verify-email#token=${token}`;
+const sendVerificationEmail = async ({ to, name, token, origin }) => {
+  const clientOrigin = getClientOrigin(origin);
+  const verificationUrl = `${clientOrigin}/verify-email#token=${token}`;
   const transporter = createTransporter();
 
   const textContent = `Confirm your StartUp registration using this link (expires in 30 minutes):
@@ -82,8 +92,9 @@ If you did not request this account, do not open the link.`;
 /**
  * Send Password Reset Link
  */
-const sendPasswordResetEmail = async ({ to, name, token }) => {
-  const resetUrl = `${CLIENT_ORIGIN}/reset-password?token=${token}`;
+const sendPasswordResetEmail = async ({ to, name, token, origin }) => {
+  const clientOrigin = getClientOrigin(origin);
+  const resetUrl = `${clientOrigin}/reset-password?token=${token}`;
   const transporter = createTransporter();
 
   if (!transporter) {

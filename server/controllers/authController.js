@@ -39,6 +39,27 @@ const setAuthCookie = (res, token, rememberMe = true) => {
   });
 };
 
+// Resolve the client base URL dynamically from the incoming request or environment
+const resolveClientOrigin = (req) => {
+  const reqOrigin = req.headers.origin || req.headers.referer;
+  if (reqOrigin) {
+    try {
+      const parsed = new URL(reqOrigin);
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        return `${parsed.protocol}//${parsed.host}`;
+      }
+    } catch (e) {
+      // ignore invalid URL
+    }
+  }
+  const envOrigin = process.env.CLIENT_ORIGIN;
+  if (envOrigin) {
+    const firstOrigin = envOrigin.split(',')[0].trim().replace(/\/+$/, '');
+    if (firstOrigin) return firstOrigin;
+  }
+  return 'http://localhost:5173';
+};
+
 /**
  * Register a new business and business owner
  * Requires email verification before signing in
@@ -88,14 +109,16 @@ const register = async (req, res, next) => {
       emailVerificationExpires: Date.now() + 30 * 60 * 1000, // 30 minutes
     });
 
+    const clientOrigin = resolveClientOrigin(req);
+
     // 5. Send Email (or log in dev)
     await sendVerificationEmail({
       to: user.email,
       name: user.name,
       token: verificationToken,
+      origin: clientOrigin,
     });
 
-    const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
     const verificationUrl = `${clientOrigin}/verify-email#token=${verificationToken}`;
 
     return res.status(201).json({
@@ -277,13 +300,15 @@ const resendVerification = async (req, res, next) => {
     user.emailVerificationExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
     await user.save();
 
+    const clientOrigin = resolveClientOrigin(req);
+
     await sendVerificationEmail({
       to: user.email,
       name: user.name,
       token: verificationToken,
+      origin: clientOrigin,
     });
 
-    const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
     const verificationUrl = `${clientOrigin}/verify-email#token=${verificationToken}`;
 
     return res.json({
@@ -480,10 +505,13 @@ const forgotPassword = async (req, res, next) => {
       user.passwordResetExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
       await user.save();
 
+      const clientOrigin = resolveClientOrigin(req);
+
       await sendPasswordResetEmail({
         to: user.email,
         name: user.name,
         token: resetToken,
+        origin: clientOrigin,
       });
 
       return res.json({

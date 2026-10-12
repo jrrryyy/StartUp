@@ -166,6 +166,16 @@ const VerifyEmail = () => {
       const res = await resendVerification(resendEmail);
       toast.success(res.message || 'Verification link sent! Check your inbox.');
 
+      if (res.verificationToken) {
+        toast.info('Click below to activate immediately without waiting for email:', {
+          action: {
+            label: 'Activate Account',
+            onClick: () => handleVerify(res.verificationToken),
+          },
+          duration: 20000,
+        });
+      }
+
       // Reset 30-min link expiration and start fresh 30-sec cooldown
       const newLinkExp = Date.now() + 30 * 60 * 1000;
       const newCooldown = Date.now() + 30 * 1000;

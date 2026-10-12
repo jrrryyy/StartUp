@@ -135,6 +135,21 @@ const startServer = async () => {
   app.listen(PORT, () => {
     console.log(`🚀 StartUp API Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
     console.log(`👉 Health check: http://localhost:${PORT}/api/health`);
+
+    // Verify SMTP Email Delivery status
+    const { createTransporter } = require('./services/emailService');
+    const transporter = createTransporter();
+    if (transporter) {
+      transporter.verify((err) => {
+        if (err) {
+          console.warn('⚠️ [SMTP Email Service Warning]:', err.message);
+        } else {
+          console.log('📧 [SMTP Email Service]: Verified and ready to dispatch live emails.');
+        }
+      });
+    } else {
+      console.warn('ℹ️ [SMTP Email Service]: SMTP_USER / SMTP_PASS not found. Add them to Render Environment Variables for live email delivery.');
+    }
   });
 };
 

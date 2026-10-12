@@ -111,8 +111,8 @@ const register = async (req, res, next) => {
 
     const clientOrigin = resolveClientOrigin(req);
 
-    // 5. Send Email (or log in dev)
-    await sendVerificationEmail({
+    // 5. Send Email
+    const emailResult = await sendVerificationEmail({
       to: user.email,
       name: user.name,
       token: verificationToken,
@@ -125,9 +125,13 @@ const register = async (req, res, next) => {
       success: true,
       needsEmailVerification: true,
       email: user.email,
-      verificationToken: process.env.NODE_ENV === 'development' || !process.env.SMTP_HOST ? verificationToken : undefined,
-      verificationUrl: process.env.NODE_ENV === 'development' || !process.env.SMTP_HOST ? verificationUrl : undefined,
-      message: 'Account registered successfully! An activation link has been sent to your email.',
+      emailSent: !!emailResult.success,
+      emailError: emailResult.error,
+      verificationToken,
+      verificationUrl,
+      message: emailResult.success
+        ? 'Account registered successfully! An activation link has been sent to your email.'
+        : 'Account created! (Email delivery is pending server SMTP setup on Render. You can activate directly with the on-screen link).',
       user: user.toSafeObject(),
       business,
     });
@@ -302,7 +306,7 @@ const resendVerification = async (req, res, next) => {
 
     const clientOrigin = resolveClientOrigin(req);
 
-    await sendVerificationEmail({
+    const emailResult = await sendVerificationEmail({
       to: user.email,
       name: user.name,
       token: verificationToken,
@@ -313,9 +317,13 @@ const resendVerification = async (req, res, next) => {
 
     return res.json({
       success: true,
-      message: 'A new activation email has been dispatched.',
-      verificationToken: process.env.NODE_ENV === 'development' || !process.env.SMTP_HOST ? verificationToken : undefined,
-      verificationUrl: process.env.NODE_ENV === 'development' || !process.env.SMTP_HOST ? verificationUrl : undefined,
+      emailSent: !!emailResult.success,
+      emailError: emailResult.error,
+      verificationToken,
+      verificationUrl,
+      message: emailResult.success
+        ? 'A new activation email has been dispatched.'
+        : 'Activation token refreshed. (Email delivery pending server SMTP setup on Render. You can activate directly with the on-screen link).',
     });
   } catch (error) {
     next(error);

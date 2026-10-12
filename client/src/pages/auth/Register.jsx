@@ -55,7 +55,8 @@ const Register = () => {
       const res = await register(formData);
       toast.success(res.message || 'Business registered successfully!');
       if (res.needsEmailVerification) {
-        navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+        const tokenParam = res.verificationToken ? `&token=${encodeURIComponent(res.verificationToken)}` : '';
+        navigate(`/verify-email?email=${encodeURIComponent(formData.email)}${tokenParam}`);
       } else {
         navigate('/onboarding');
       }

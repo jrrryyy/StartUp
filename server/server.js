@@ -136,19 +136,25 @@ const startServer = async () => {
     console.log(`🚀 StartUp API Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);
     console.log(`👉 Health check: http://localhost:${PORT}/api/health`);
 
-    // Verify SMTP Email Delivery status
-    const { createTransporter } = require('./services/emailService');
-    const transporter = createTransporter();
-    if (transporter) {
-      transporter.verify((err) => {
-        if (err) {
-          console.warn('⚠️ [SMTP Email Service Warning]:', err.message);
-        } else {
-          console.log('📧 [SMTP Email Service]: Verified and ready to dispatch live emails.');
-        }
-      });
+    // Verify Email Delivery service status
+    if (process.env.RESEND_API_KEY) {
+      console.log('📧 [Email Service]: Active via Resend HTTPS API (Port 443 — Render Firewall Safe)');
+    } else if (process.env.BREVO_API_KEY) {
+      console.log('📧 [Email Service]: Active via Brevo HTTPS API (Port 443 — Render Firewall Safe)');
     } else {
-      console.warn('ℹ️ [SMTP Email Service]: SMTP_USER / SMTP_PASS not found. Add them to Render Environment Variables for live email delivery.');
+      const { createTransporter } = require('./services/emailService');
+      const transporter = createTransporter();
+      if (transporter) {
+        transporter.verify((err) => {
+          if (err) {
+            console.warn('⚠️ [SMTP Email Warning]:', err.message);
+          } else {
+            console.log('📧 [SMTP Email Service]: Verified and ready to dispatch live emails.');
+          }
+        });
+      } else {
+        console.warn('ℹ️ [Email Service]: Add RESEND_API_KEY to Render Environment Variables for live delivery.');
+      }
     }
   });
 };

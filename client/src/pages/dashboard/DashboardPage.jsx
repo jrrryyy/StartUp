@@ -260,7 +260,9 @@ const DashboardPage = () => {
                     <YAxis fontSize={11} stroke="#64748B" />
                     <Tooltip
                       formatter={(val) => [formatCurrency(val, symbol), 'Revenue']}
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff', borderRadius: '12px' }}
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#ffffff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)' }}
+                      itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                      labelStyle={{ color: '#ffffff', fontWeight: 700 }}
                     />
                     <Line
                       type="monotone"
@@ -291,7 +293,9 @@ const DashboardPage = () => {
                     <YAxis fontSize={11} stroke="#64748B" allowDecimals={false} />
                     <Tooltip
                       formatter={(val) => [val, 'Completed Orders']}
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff', borderRadius: '12px' }}
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#ffffff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)' }}
+                      itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                      labelStyle={{ color: '#ffffff', fontWeight: 700 }}
                     />
                     <Bar dataKey="orders" fill="#10B981" radius={[6, 6, 0, 0]} />
                   </BarChart>
@@ -328,7 +332,9 @@ const DashboardPage = () => {
                     <YAxis fontSize={11} stroke="#64748B" />
                     <Tooltip
                       formatter={(val) => [formatCurrency(val, symbol)]}
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff', borderRadius: '12px' }}
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#ffffff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)' }}
+                      itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                      labelStyle={{ color: '#ffffff', fontWeight: 700 }}
                     />
                     <Legend />
                     <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#22C55E" fillOpacity={1} fill="url(#revGrad)" />
@@ -372,7 +378,9 @@ const DashboardPage = () => {
                       </Pie>
                       <Tooltip
                         formatter={(val) => [formatCurrency(val, symbol)]}
-                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff', borderRadius: '12px' }}
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#ffffff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)' }}
+                        itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                        labelStyle={{ color: '#ffffff', fontWeight: 700 }}
                       />
                       <Legend wrapperStyle={{ fontSize: '11px' }} />
                     </PieChart>

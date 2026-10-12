@@ -228,7 +228,9 @@ const AnalyticsPage = () => {
                       </Pie>
                       <Tooltip
                         formatter={(val) => [formatCurrency(val, symbol)]}
-                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff', borderRadius: '12px' }}
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#ffffff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)' }}
+                        itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                        labelStyle={{ color: '#ffffff', fontWeight: 700 }}
                       />
                       <Legend wrapperStyle={{ fontSize: '11px' }} />
                     </PieChart>
@@ -261,7 +263,9 @@ const AnalyticsPage = () => {
                       <YAxis dataKey="name" type="category" fontSize={10} width={90} stroke="#64748B" />
                       <Tooltip
                         formatter={(val) => [`${val} units sold`]}
-                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff', borderRadius: '12px' }}
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#ffffff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)' }}
+                        itemStyle={{ color: '#ffffff', fontWeight: 600 }}
+                        labelStyle={{ color: '#ffffff', fontWeight: 700 }}
                       />
                       <Bar dataKey="quantity" fill="#22C55E" radius={[0, 6, 6, 0]} />
                     </BarChart>

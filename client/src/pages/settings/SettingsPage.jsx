@@ -66,7 +66,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl mx-auto py-2">
       <div>
         <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">Business Settings</h2>
         <p className="text-xs text-slate-500 dark:text-slate-400">

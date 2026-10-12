@@ -35,7 +35,7 @@ const Login = () => {
     } catch (err) {
       if (err.response?.data?.needsEmailVerification) {
         toast.info(err.response.data.message || 'Please verify your email address.');
-        navigate(`/verify-email?email=${encodeURIComponent(email)}&devToken=${err.response.data.verificationToken || ''}`);
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`);
         return;
       }
       const msg = err.response?.data?.message || 'Invalid email or password. Please try again.';

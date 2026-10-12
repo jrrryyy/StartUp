@@ -119,19 +119,21 @@ const register = async (req, res, next) => {
       origin: clientOrigin,
     });
 
-    const verificationUrl = `${clientOrigin}/verify-email#token=${verificationToken}`;
+    if (!emailResult.success) {
+      // Rollback user and business so no orphan unverified account is left behind
+      await User.findByIdAndDelete(user._id);
+      await Business.findByIdAndDelete(business._id);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to dispatch activation email to ${user.email}: ${emailResult.error || 'SMTP delivery failed'}. Please check your server SMTP credentials and try again.`,
+      });
+    }
 
     return res.status(201).json({
       success: true,
       needsEmailVerification: true,
       email: user.email,
-      emailSent: !!emailResult.success,
-      emailError: emailResult.error,
-      verificationToken,
-      verificationUrl,
-      message: emailResult.success
-        ? 'Account registered successfully! An activation link has been sent to your email.'
-        : 'Account created! (Email delivery is pending server SMTP setup on Render. You can activate directly with the on-screen link).',
+      message: 'Account registered successfully! An activation link has been sent to your email. Please check your inbox to activate your account.',
       user: user.toSafeObject(),
       business,
     });
@@ -191,7 +193,6 @@ const login = async (req, res, next) => {
         success: false,
         needsEmailVerification: true,
         email: user.email,
-        verificationToken,
         message: 'Please verify your email address before signing in. Check your inbox for the activation link.',
       });
     }
@@ -313,17 +314,16 @@ const resendVerification = async (req, res, next) => {
       origin: clientOrigin,
     });
 
-    const verificationUrl = `${clientOrigin}/verify-email#token=${verificationToken}`;
+    if (!emailResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to dispatch activation email: ${emailResult.error || 'SMTP delivery failed'}. Please check your server SMTP settings.`,
+      });
+    }
 
     return res.json({
       success: true,
-      emailSent: !!emailResult.success,
-      emailError: emailResult.error,
-      verificationToken,
-      verificationUrl,
-      message: emailResult.success
-        ? 'A new activation email has been dispatched.'
-        : 'Activation token refreshed. (Email delivery pending server SMTP setup on Render. You can activate directly with the on-screen link).',
+      message: 'A new activation email has been sent to your inbox. Please check your email to activate your account.',
     });
   } catch (error) {
     next(error);

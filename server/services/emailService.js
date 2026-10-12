@@ -70,13 +70,8 @@ If you did not request this account, do not open the link.`;
   `;
 
   if (!transporter) {
-    console.log('\n============================================================');
-    console.log(`[EMAIL SERVICE] (No SMTP configured - Running in Local Mode)`);
-    console.log(`To: ${to}`);
-    console.log(`Subject: Verify your StartUp email`);
-    console.log(`\n${textContent}`);
-    console.log('============================================================\n');
-    return { success: true, localMode: true, verificationUrl };
+    console.error(`[EMAIL SERVICE ERROR] Cannot send email to ${to}: SMTP_USER or SMTP_PASS not configured in environment.`);
+    return { success: false, error: 'SMTP email credentials (SMTP_USER / SMTP_PASS) not configured on server.' };
   }
 
   try {
@@ -104,11 +99,8 @@ const sendPasswordResetEmail = async ({ to, name, token, origin }) => {
   const transporter = createTransporter();
 
   if (!transporter) {
-    console.log('\n============================================================');
-    console.log(`[EMAIL SERVICE] (No SMTP configured - Running in Local Mode)`);
-    console.log(`Password Reset Link for ${to}: ${resetUrl}`);
-    console.log('============================================================\n');
-    return { success: true, localMode: true, resetUrl };
+    console.error(`[EMAIL SERVICE ERROR] Cannot send password reset email to ${to}: SMTP_USER or SMTP_PASS not configured.`);
+    return { success: false, error: 'SMTP email credentials not configured on server.' };
   }
 
   const htmlContent = `

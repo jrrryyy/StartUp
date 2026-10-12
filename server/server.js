@@ -32,20 +32,40 @@ app.use(
 );
 
 // CORS allowlist configuration
-const allowedOrigins = [
-  process.env.CLIENT_ORIGIN || 'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173',
-];
+const parseAllowedOrigins = () => {
+  const defaults = ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+  const envOrigins = (process.env.CLIENT_ORIGIN || '')
+    .split(',')
+    .map((o) => o.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
+  return Array.from(new Set([...defaults, ...envOrigins]));
+};
+
+const allowedOrigins = parseAllowedOrigins();
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps or curl)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (e.g. mobile apps, curl, or server-to-server)
+      if (!origin) return callback(null, true);
+
+      const cleanOrigin = origin.replace(/\/+$/, '');
+      let isVercelDomain = false;
+      try {
+        const parsedUrl = new URL(origin);
+        isVercelDomain = parsedUrl.hostname.endsWith('.vercel.app');
+      } catch (e) {
+        // invalid URL
+      }
+
+      if (
+        allowedOrigins.includes(cleanOrigin) ||
+        isVercelDomain ||
+        process.env.NODE_ENV !== 'production'
+      ) {
         callback(null, true);
       } else {
-        callback(null, true); // Allow during development
+        callback(new Error(`CORS blocked for origin: ${origin}`));
       }
     },
     credentials: true,

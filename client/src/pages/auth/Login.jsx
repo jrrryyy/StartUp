@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
-import { Zap, Eye, EyeOff, Lock, Mail, ArrowRight, ArrowLeft, Loader2, Sparkles } from 'lucide-react';
+import { Zap, Eye, EyeOff, Lock, Mail, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 
 const Login = () => {
   const { login } = useAuth();
@@ -44,13 +44,6 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Demo auto-fill helper
-  const handleFillDemo = () => {
-    setEmail('owner@startupcafe.ph');
-    setPassword('StartUp2026!');
-    toast.info('Demo credentials loaded. Click "Sign in to Dashboard".');
   };
 
   return (
@@ -197,18 +190,6 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Quick Demo Helper */}
-          <div className="mt-6 rounded-xl border border-dashed border-[#1E2E21] bg-[#101912]/80 p-3 text-center">
-            <p className="text-[11px] text-limestone-400 mb-2">Need quick testing credentials?</p>
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="inline-flex items-center space-x-1.5 rounded-lg border border-brand-500/30 bg-brand-950/40 px-3 py-1.5 text-[11px] font-semibold text-brand-300 hover:bg-brand-900/40 transition"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-brand-400" />
-              <span>Fill Sample Credentials</span>
-            </button>
-          </div>
 
           <p className="mt-8 text-center text-xs text-limestone-400">
             Don't have a business account yet?{' '}

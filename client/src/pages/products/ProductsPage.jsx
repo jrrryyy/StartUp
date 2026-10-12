@@ -19,6 +19,18 @@ import {
 
 import ConfirmModal from '../../components/common/ConfirmModal';
 
+const DEFAULT_CATEGORIES = [
+  'Coffee',
+  'Non-Coffee',
+  'Blended',
+  'Pastries',
+  'Desserts',
+  'Meals',
+  'Snacks',
+  'Beverages',
+  'Retail',
+];
+
 const ProductsPage = () => {
   const { business, isOwner } = useAuth();
   const symbol = business?.currencySymbol || '₱';
@@ -35,6 +47,7 @@ const ProductsPage = () => {
   const [saving, setSaving] = useState(false);
   const [productToArchive, setProductToArchive] = useState(null);
   const [archiveLoading, setArchiveLoading] = useState(false);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -72,8 +85,17 @@ const ProductsPage = () => {
     fetchProducts();
   }, []);
 
+  const categoryOptions = Array.from(
+    new Set([
+      ...DEFAULT_CATEGORIES,
+      ...categories.filter((c) => c && c !== 'All'),
+      ...(formData.category ? [formData.category] : []),
+    ])
+  );
+
   const openAddModal = () => {
     setEditingProduct(null);
+    setIsCustomCategory(false);
     setFormData({
       name: '',
       sku: `PRD-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -90,6 +112,7 @@ const ProductsPage = () => {
 
   const openEditModal = (prod) => {
     setEditingProduct(prod);
+    setIsCustomCategory(!categoryOptions.includes(prod.category));
     setFormData({
       name: prod.name,
       sku: prod.sku,
@@ -379,17 +402,58 @@ const ProductsPage = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Category *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="e.g. Coffee, Pastries"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-xs text-slate-900 focus:border-brand-500 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Category *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomCategory(!isCustomCategory);
+                        if (!isCustomCategory) {
+                          setFormData({ ...formData, category: '' });
+                        } else {
+                          setFormData({ ...formData, category: categoryOptions[0] || 'Coffee' });
+                        }
+                      }}
+                      className="text-[10px] font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
+                    >
+                      {isCustomCategory ? 'Select from list' : '+ Custom Category'}
+                    </button>
+                  </div>
+
+                  {isCustomCategory ? (
+                    <input
+                      type="text"
+                      required
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      placeholder="Type custom category name..."
+                      autoFocus
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-xs text-slate-900 focus:border-brand-500 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    />
+                  ) : (
+                    <select
+                      required
+                      value={formData.category}
+                      onChange={(e) => {
+                        if (e.target.value === '__NEW__') {
+                          setIsCustomCategory(true);
+                          setFormData({ ...formData, category: '' });
+                        } else {
+                          setFormData({ ...formData, category: e.target.value });
+                        }
+                      }}
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-xs text-slate-900 focus:border-brand-500 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                    >
+                      {categoryOptions.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                      <option value="__NEW__">+ Custom / New Category...</option>
+                    </select>
+                  )}
                 </div>
 
                 <div>

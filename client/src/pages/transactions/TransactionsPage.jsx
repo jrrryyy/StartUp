@@ -130,9 +130,9 @@ const TransactionsPage = () => {
 
       {/* Filters Bar */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-12">
           {/* Search by Receipt */}
-          <div className="relative">
+          <div className="relative xl:col-span-4">
             <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
             <input
               type="text"
@@ -144,7 +144,7 @@ const TransactionsPage = () => {
           </div>
 
           {/* Status Filter */}
-          <div>
+          <div className="xl:col-span-2">
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -158,7 +158,7 @@ const TransactionsPage = () => {
           </div>
 
           {/* Payment Method Filter */}
-          <div>
+          <div className="xl:col-span-2">
             <select
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
@@ -172,22 +172,32 @@ const TransactionsPage = () => {
             </select>
           </div>
 
-          {/* Date Filter Inputs */}
-          <div className="flex space-x-2">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-1/2 rounded-xl border border-slate-200 bg-slate-50 py-2 px-2 text-xs text-slate-900 focus:border-brand-500 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-              title="Start Date"
-            />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-1/2 rounded-xl border border-slate-200 bg-slate-50 py-2 px-2 text-xs text-slate-900 focus:border-brand-500 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-              title="End Date"
-            />
+          {/* Date Filter Inputs with Clear Labels */}
+          <div className="flex items-center space-x-2 xl:col-span-4">
+            <div className="flex flex-1 min-w-[130px] items-center rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 focus-within:border-brand-500 focus-within:bg-white dark:border-slate-800 dark:bg-slate-950">
+              <span className="mr-1.5 shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                From
+              </span>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full min-w-0 bg-transparent text-xs text-slate-900 focus:outline-none dark:text-white"
+                title="Start Date (From)"
+              />
+            </div>
+            <div className="flex flex-1 min-w-[130px] items-center rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 focus-within:border-brand-500 focus-within:bg-white dark:border-slate-800 dark:bg-slate-950">
+              <span className="mr-1.5 shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                To
+              </span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full min-w-0 bg-transparent text-xs text-slate-900 focus:outline-none dark:text-white"
+                title="End Date (To)"
+              />
+            </div>
           </div>
         </div>
       </div>

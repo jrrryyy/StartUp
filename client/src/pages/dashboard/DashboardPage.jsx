@@ -35,6 +35,33 @@ import {
 
 const COLORS = ['#22C55E', '#16A34A', '#4ADE80', '#10B981', '#34D399', '#059669'];
 
+// High-contrast, easily distinguishable category colors
+const CATEGORY_COLORS = {
+  Coffee: '#854D0E', // Rich Roasted Coffee Brown
+  'Non-Coffee': '#10B981', // Matcha Green
+  Pastries: '#F59E0B', // Golden Warm Bakery Amber
+  Snacks: '#F97316', // Coral Orange
+  Retail: '#8B5CF6', // Purple / Indigo
+  Blended: '#06B6D4', // Cool Cyan Frappe
+  Desserts: '#EC4899', // Berry Pink
+  Meals: '#14B8A6', // Ocean Teal
+  Beverages: '#3B82F6', // Cobalt Blue
+  Other: '#64748B', // Neutral Slate
+};
+
+const DISTINCT_PALETTE = [
+  '#F59E0B', // Amber
+  '#8B5CF6', // Purple
+  '#06B6D4', // Cyan
+  '#10B981', // Emerald
+  '#F97316', // Orange
+  '#EC4899', // Pink
+  '#3B82F6', // Blue
+  '#854D0E', // Coffee Brown
+  '#14B8A6', // Teal
+  '#6366F1', // Indigo
+];
+
 const DashboardPage = () => {
   const { business } = useAuth();
   const symbol = business?.currencySymbol || '₱';
@@ -42,7 +69,6 @@ const DashboardPage = () => {
   const [period, setPeriod] = useState('30days');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
-  const [seeding, setSeeding] = useState(false);
 
   const fetchOverview = async () => {
     setLoading(true);
@@ -62,18 +88,6 @@ const DashboardPage = () => {
     fetchOverview();
   }, [period]);
 
-  const handleSeedDemo = async () => {
-    setSeeding(true);
-    try {
-      const res = await api.post('/demo/seed');
-      toast.success(res.data.message || 'Demo data loaded successfully!');
-      fetchOverview();
-    } catch (err) {
-      toast.error('Failed to seed demo records.');
-    } finally {
-      setSeeding(false);
-    }
-  };
 
   const kpis = data?.kpis || {
     grossSales: 0,
@@ -122,21 +136,6 @@ const DashboardPage = () => {
               <option value="year">This Year</option>
             </select>
           </div>
-
-          {/* Quick Demo Data Seed Button */}
-          <button
-            onClick={handleSeedDemo}
-            disabled={seeding}
-            className="flex items-center space-x-1.5 rounded-xl border border-brand-500/30 bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-700 shadow-sm hover:bg-brand-100 dark:bg-brand-950/40 dark:text-brand-300 dark:hover:bg-brand-900/50 transition"
-            title="Populate realistic café products and transactions"
-          >
-            {seeding ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Sparkles className="h-3.5 w-3.5 text-brand-500" />
-            )}
-            <span>{seeding ? 'Seeding...' : 'Load Demo Data'}</span>
-          </button>
         </div>
       </div>
 
@@ -364,9 +363,12 @@ const DashboardPage = () => {
                         paddingAngle={4}
                         dataKey="value"
                       >
-                        {charts.categoryDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
+                        {charts.categoryDistribution.map((entry, index) => {
+                          const sliceColor =
+                            CATEGORY_COLORS[entry.name] ||
+                            DISTINCT_PALETTE[index % DISTINCT_PALETTE.length];
+                          return <Cell key={`cell-${index}`} fill={sliceColor} />;
+                        })}
                       </Pie>
                       <Tooltip
                         formatter={(val) => [formatCurrency(val, symbol)]}

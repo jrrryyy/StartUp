@@ -34,7 +34,6 @@ const Onboarding = () => {
     receiptFooter: business?.receiptFooter || 'Please come again! Keep this receipt for reference.',
   });
 
-  const [seedSampleData, setSeedSampleData] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -66,14 +65,6 @@ const Onboarding = () => {
         updateBusinessState(res.data.business);
       }
 
-      // 2. If seed requested, seed demo catalog
-      if (seedSampleData) {
-        try {
-          await api.post('/demo/seed');
-        } catch (e) {
-          console.warn('Seed notice:', e.message);
-        }
-      }
 
       toast.success("Welcome to StartUp! Your business register is ready.");
       navigate('/dashboard');
@@ -102,7 +93,7 @@ const Onboarding = () => {
           {[
             { num: 1, label: 'Identity' },
             { num: 2, label: 'Tax & Receipts' },
-            { num: 3, label: 'Catalog Ready' },
+            { num: 3, label: 'Ready to Launch' },
           ].map((s, idx) => (
             <React.Fragment key={s.num}>
               <div className="flex items-center space-x-2">
@@ -266,25 +257,15 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Wizard Step 3: Seed Catalog & Launch */}
+        {/* Wizard Step 3: Confirmation & Launch */}
         {step === 3 && (
           <div className="space-y-5 text-center">
-            <div className="rounded-2xl border border-brand-500/20 bg-brand-950/20 p-6">
+            <div className="rounded-2xl border border-brand-500/20 bg-brand-950/20 p-8">
               <Store className="mx-auto h-12 w-12 text-brand-400 mb-3" />
               <h3 className="text-lg font-bold text-white">Your store is configured!</h3>
-              <p className="mt-1 text-xs text-limestone-400 max-w-sm mx-auto">
-                Would you like to seed realistic sample menu items (Spanish Latte, Cold Brew, Pastries) and recent transactions to test out the dashboard and POS immediately?
+              <p className="mt-2 text-xs text-limestone-300 max-w-sm mx-auto leading-relaxed">
+                Your business details, tax rates, and receipt preferences have been successfully configured. Click below to launch your dashboard and begin managing your store.
               </p>
-
-              <label className="mt-5 inline-flex items-center space-x-2.5 rounded-xl border border-brand-500/30 bg-brand-900/30 px-4 py-2.5 text-xs font-semibold text-white cursor-pointer hover:bg-brand-900/50 transition">
-                <input
-                  type="checkbox"
-                  checked={seedSampleData}
-                  onChange={(e) => setSeedSampleData(e.target.checked)}
-                  className="rounded border-[#1E2E21] bg-[#131F17] text-brand-600 focus:ring-brand-500"
-                />
-                <span>Include realistic demo products & past sales records</span>
-              </label>
             </div>
           </div>
         )}

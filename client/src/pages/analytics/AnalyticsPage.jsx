@@ -32,6 +32,20 @@ import {
 
 const PALETTE = ['#22C55E', '#16A34A', '#4ADE80', '#10B981', '#34D399', '#059669'];
 
+// Specific brand colors for payment channels
+const PAYMENT_COLORS = {
+  GCash: '#007DFE', // Vibrant GCash Blue
+  gcash: '#007DFE',
+  Maya: '#10B981', // PayMaya / Maya Green
+  maya: '#10B981',
+  PayMaya: '#10B981',
+  paymaya: '#10B981',
+  Cash: '#EAB308', // Cash Yellow
+  cash: '#EAB308',
+  Other: '#94A3B8', // Neutral Slate
+  other: '#94A3B8',
+};
+
 const AnalyticsPage = () => {
   const { business } = useAuth();
   const symbol = business?.currencySymbol || '₱';
@@ -207,9 +221,10 @@ const AnalyticsPage = () => {
                         paddingAngle={5}
                         dataKey="value"
                       >
-                        {charts.paymentDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={PALETTE[index % PALETTE.length]} />
-                        ))}
+                        {charts.paymentDistribution.map((entry, index) => {
+                          const sliceColor = PAYMENT_COLORS[entry.name] || PALETTE[index % PALETTE.length];
+                          return <Cell key={`cell-${index}`} fill={sliceColor} />;
+                        })}
                       </Pie>
                       <Tooltip
                         formatter={(val) => [formatCurrency(val, symbol)]}
